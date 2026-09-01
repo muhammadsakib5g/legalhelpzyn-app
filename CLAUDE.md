@@ -51,7 +51,7 @@ directory — if the brand changes, update there first, then re-copy.
 - **Do not add packages** unless the task genuinely needs one — ask first. A scaffold with a
   20-package dependency list is harder to reason about than one built up deliberately.
 - **Do not write feature code before the API exists.** Building screens against an imagined API
-  contract produces rework. Wait for Phase 9 of the backend.
+  contract produces rework. Wait for Phase 11 of the backend.
 - **No secrets, API keys, or signing material in the repo.** Base URLs come from
   `--dart-define`/environment config; keystores stay out of version control.
 - Work through the Phase Plan in order. **Finish one phase, then stop and get approval** before
@@ -112,7 +112,7 @@ The app's phases are gated on the backend. Backend phase numbers refer to the Ph
 Flutter project created, brand theme and assets wired in, placeholder screen, repo pushed to
 GitHub. `flutter analyze` clean.
 
-### Phase B — App shell *(blocked on backend Phase 9)*
+### Phase B — App shell *(blocked on backend Phase 11)*
 
 Navigation skeleton, API client with base URL config, error handling, token storage. No screens
 beyond structure.
@@ -120,16 +120,21 @@ beyond structure.
 ### Phase C — Authentication
 
 Register, log in, log out, password reset, session persistence. Mirrors the website's client-portal
-auth exactly, using the same Sanctum-backed endpoints.
+auth exactly, using the same Sanctum-backed endpoints. Registration is **approval-gated**: a new
+account is inactive until the firm verifies it, so the app needs a real "pending approval" state
+rather than dropping the user at a login screen that just fails.
 
-### Phase D — Service catalogue
+### Phase D — Practice areas
 
-Browse and search the services the firm offers. Service detail screens. Read-only.
+Browse the firm's practice areas and read their detail screens. Read-only, and the simplest way to
+prove the API client works end to end before the portal screens depend on it.
 
-### Phase E — Service requests
+### Phase E — Matters & documents
 
-Submit a request, upload supporting documents, view request status and history. This is the core of
-the app and must match the website's portal behaviour exactly.
+The core of the app, mirroring the website's client portal exactly: upload case documents into
+categories, download files the firm has shared, and view the status and next date of each matter.
+Client-level isolation is enforced server-side, but the app must never render or cache another
+client's data either.
 
 ### Phase F — Billing
 
@@ -144,6 +149,6 @@ signed release builds.
 ## Open Questions
 
 - The API contract does not exist yet — endpoint shapes, auth flow details, and pagination style
-  all come from backend Phase 9.
+  all come from backend Phase 11.
 - Push notifications: wanted, and if so via which provider? Not yet discussed.
 - Minimum supported Android/iOS versions not yet agreed.
